@@ -20,14 +20,13 @@ Using Neo4j, this knowledge graph answers multi-entity questions instantly:
 
 ## 📐 Graph Topology & Data Model
 
-```mermaid
-graph TD
-    Student["(:Student)"] -->|:ENROLLED_IN {enrolledOn}| Course["(:Course)"]
-    Mentor["(:Mentor)"] -->|:TEACHES| Course
-    Course -->|:TEACHES_SKILL| Skill["(:Skill)"]
-    Student -->|:BUILT| Project["(:Project)"]
-    Project -->|:USES| Skill
-    Student -->|:INTERESTED_IN {priority}| Company["(:Company)"]
+```graph TD
+    Student[":Student"] -->|ENROLLED_IN {enrolledOn}| Course[":Course"]
+    Mentor[":Mentor"] -->|TEACHES| Course
+    Course -->|TEACHES_SKILL| Skill[":Skill"]
+    Student -->|BUILT| Project[":Project"]
+    Project -->|USES| Skill
+    Student -->|INTERESTED_IN {priority}| Company[":Company"]
 ```
 
 ### Node Metrics (22 Nodes Total)
