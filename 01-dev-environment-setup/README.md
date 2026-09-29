@@ -146,7 +146,7 @@ git commit -m "Initial commit: environment setup and Neo4j connectivity verifica
 ## Link your local project to GitHub and push:
 ```bash
 git branch -M main
-git remote add origin [https://github.com/](https://github.com/)/.git
+git remote add origin https://github.com/your-username/your-repo.git
 git push -u origin main
 ```
 ## Note: VS Code will open a browser prompt to authenticate with your GitHub account if you haven't already signed in. Alternatively, verify or authenticate using GitHub CLI:
