@@ -34,8 +34,26 @@ This project sets up the foundational environment for securely connecting Python
 - **[`python-dotenv`](https://pypi.org/project/python-dotenv/)**: Reads key-value pairs from `.env` and sets them as system environment variables.
 
 ---
+## Base Installations & Verification
+
+1. Ensure **Python 3.10+**, **Git**, and **VS Code** are installed.
+2. In VS Code, install the official **Python extension** (by Microsoft) from the Extensions Marketplace (`Ctrl + Shift + X` / `Cmd + Shift + X` on macOS).
+3. Open a new terminal in VS Code (``Ctrl + ` `` or ``Cmd + ` `` on macOS) and verify the CLI installations:
+
+```bash
+python --version
+pip --version
+git --version
+```
+
+## Configure global Git identity if you haven't already:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your_email@example.com"
 
 ## 🔍 Code Deep Dive: `verify_connection.py`
+```
 
 The core script [`verify_connection.py`](verify_connection.py) performs 4 sequential verification steps:
 
@@ -114,7 +132,28 @@ Connecting to Neo4j Aura...
  Query Result: Neo4j connection active and healthy!
  Database Server: Neo4j/5.x-aura
 ```
+## Git Initialization & GitHub Push
 
+1. Initialize Git in the project root:
+
+```bash
+git init
+git add .
+git commit -m "Initial commit: environment setup and Neo4j connectivity verification"
+```
+## Create a new repository on GitHub (keep it empty, without README or license).
+
+## Link your local project to GitHub and push:
+```bash
+git branch -M main
+git remote add origin [https://github.com/](https://github.com/)/.git
+git push -u origin main
+```
+## Note: VS Code will open a browser prompt to authenticate with your GitHub account if you haven't already signed in. Alternatively, verify or authenticate using GitHub CLI:
+```bash
+gh auth login
+gh auth status
+```
 ## 🎤 How to Explain This Project to Technical Reviewers
 
 - **For Technical Screeners**: *"In this module, I set up the driver layer for Neo4j in Python. I used `python-dotenv` to separate configuration from code and implemented context-managed driver instances. I also included specific exception handling for `AuthError` and `ServiceUnavailable` to handle connection failures gracefully."*
