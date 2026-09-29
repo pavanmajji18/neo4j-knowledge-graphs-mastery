@@ -2,7 +2,8 @@
 
 [![Cypher](https://img.shields.io/badge/Cypher-DDL%20%2F%20DML-blue.svg)](https://neo4j.com/docs/cypher-manual/current/)
 [![Graph Database](https://img.shields.io/badge/Neo4j-Aura%20%2F%20Desktop-008CC1.svg)](https://neo4j.com/)
-[![Schema](https://img.shields.io/badge/Schema-22%20Nodes%20%7C%2027%20Edges-orange.svg)]()
+[![Schema](https://img.shields.io/badge/Schema-22%20Nodes%20%7C%2028%20Edges-orange.svg)]()
+
 
 This project builds an educational ecosystem Knowledge Graph modeling the relationships between **Students**, **Mentors**, **Courses**, **Skills**, **Projects**, and target hiring **Companies**. It showcases Cypher DDL/DML, property graph modeling, graph traversal, and CRUD execution in Neo4j.
 
@@ -40,7 +41,8 @@ Using Neo4j, this knowledge graph answers multi-entity questions instantly:
 | `Project` | 3 | `id`, `name`, `difficulty` | Hands-on capstones (`P01` - `P03`). |
 | `Company` | 3 | `id`, `name`, `location` | Hiring partners (`GraphTech Labs`, `NextGen Cloud`, `DataFlow Systems`). |
 
-### Relationship Metrics (27 Relationships Total)
+### Relationship Metrics (28 Relationships Total)
+
 
 | Relationship Type | Source -> Target | Properties | Purpose |
 |---|---|---|---|
