@@ -2,6 +2,14 @@ from pathlib import Path
 from connection import get_driver
 
 SEED_CYPHER_STATEMENTS = [
+    # Uniqueness constraints for index-backed MERGE lookups (Neo4j 5+)
+    'CREATE CONSTRAINT student_id_unique IF NOT EXISTS FOR (s:Student) REQUIRE s.id IS UNIQUE',
+    'CREATE CONSTRAINT mentor_id_unique IF NOT EXISTS FOR (m:Mentor) REQUIRE m.id IS UNIQUE',
+    'CREATE CONSTRAINT course_code_unique IF NOT EXISTS FOR (c:Course) REQUIRE c.code IS UNIQUE',
+    'CREATE CONSTRAINT skill_name_unique IF NOT EXISTS FOR (sk:Skill) REQUIRE sk.name IS UNIQUE',
+    'CREATE CONSTRAINT project_id_unique IF NOT EXISTS FOR (p:Project) REQUIRE p.id IS UNIQUE',
+    'CREATE CONSTRAINT company_id_unique IF NOT EXISTS FOR (co:Company) REQUIRE co.id IS UNIQUE',
+    # Node creation
     'MERGE (s:Student {id: "S01"}) ON CREATE SET s.name = "Aarav Sharma", s.level = "Beginner"',
     'MERGE (s:Student {id: "S02"}) ON CREATE SET s.name = "Elena Rostova", s.level = "Intermediate"',
     'MERGE (s:Student {id: "S03"}) ON CREATE SET s.name = "Chen Wei", s.level = "Advanced"',
@@ -63,17 +71,17 @@ def seed_database():
     else:
         queries = SEED_CYPHER_STATEMENTS
 
-    driver = get_driver()
-    with driver.session() as session:
-        for query in queries:
-            session.run(query)
-        node_res = session.run("MATCH (n) RETURN count(n) AS count").single()
-        rel_res = session.run("MATCH ()-[r]->() RETURN count(r) AS count").single()
-        nodes = node_res["count"] if node_res else 0
-        rels = rel_res["count"] if rel_res else 0
+    with get_driver() as driver:
+        driver.verify_connectivity()
+        with driver.session() as session:
+            for query in queries:
+                session.run(query)
+            node_res = session.run("MATCH (n) RETURN count(n) AS count").single()
+            rel_res = session.run("MATCH ()-[r]->() RETURN count(r) AS count").single()
+            nodes = node_res["count"] if node_res else 0
+            rels = rel_res["count"] if rel_res else 0
 
-    driver.close()
     print(f"Graph successfully seeded with {nodes} nodes and {rels} relationships.")
 
 if __name__ == "__main__":
-    seed_database()
+    seed_database()

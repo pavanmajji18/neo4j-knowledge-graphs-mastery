@@ -1,3 +1,11 @@
+// 0. Uniqueness constraints for index-backed MERGE lookups (Neo4j 5+)
+CREATE CONSTRAINT student_id_unique IF NOT EXISTS FOR (s:Student) REQUIRE s.id IS UNIQUE;
+CREATE CONSTRAINT mentor_id_unique IF NOT EXISTS FOR (m:Mentor) REQUIRE m.id IS UNIQUE;
+CREATE CONSTRAINT course_code_unique IF NOT EXISTS FOR (c:Course) REQUIRE c.code IS UNIQUE;
+CREATE CONSTRAINT skill_name_unique IF NOT EXISTS FOR (sk:Skill) REQUIRE sk.name IS UNIQUE;
+CREATE CONSTRAINT project_id_unique IF NOT EXISTS FOR (p:Project) REQUIRE p.id IS UNIQUE;
+CREATE CONSTRAINT company_id_unique IF NOT EXISTS FOR (co:Company) REQUIRE co.id IS UNIQUE;
+
 // 1. Create Students (6 nodes)
 MERGE (s:Student {id: "S01"}) ON CREATE SET s.name = "Aarav Sharma", s.level = "Beginner";
 MERGE (s:Student {id: "S02"}) ON CREATE SET s.name = "Elena Rostova", s.level = "Intermediate";
@@ -70,4 +78,4 @@ MATCH (p:Project {id: "P03"}), (sk:Skill {name: "Docker"}) MERGE (p)-[:USES]->(s
 MATCH (s:Student {id: "S01"}), (co:Company {id: "C01"}) MERGE (s)-[r:INTERESTED_IN]->(co) ON CREATE SET r.priority = "High";
 MATCH (s:Student {id: "S02"}), (co:Company {id: "C01"}) MERGE (s)-[r:INTERESTED_IN]->(co) ON CREATE SET r.priority = "Medium";
 MATCH (s:Student {id: "S03"}), (co:Company {id: "C02"}) MERGE (s)-[r:INTERESTED_IN]->(co) ON CREATE SET r.priority = "High";
-MATCH (s:Student {id: "S06"}), (co:Company {id: "C03"}) MERGE (s)-[r:INTERESTED_IN]->(co) ON CREATE SET r.priority = "High";
+MATCH (s:Student {id: "S06"}), (co:Company {id: "C03"}) MERGE (s)-[r:INTERESTED_IN]->(co) ON CREATE SET r.priority = "High";

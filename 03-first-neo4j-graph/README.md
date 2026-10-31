@@ -21,7 +21,8 @@ Using Neo4j, this knowledge graph answers multi-entity questions instantly:
 
 ## 📐 Graph Topology & Data Model
 
-```graph TD
+```mermaid
+graph TD
     Student[":Student"] -->|ENROLLED_IN {enrolledOn}| Course[":Course"]
     Mentor[":Mentor"] -->|TEACHES| Course
     Course -->|TEACHES_SKILL| Skill[":Skill"]
