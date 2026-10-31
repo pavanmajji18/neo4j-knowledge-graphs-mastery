@@ -23,12 +23,12 @@ Using Neo4j, this knowledge graph answers multi-entity questions instantly:
 
 ```mermaid
 graph TD
-    Student[":Student"] -->|ENROLLED_IN {enrolledOn}| Course[":Course"]
-    Mentor[":Mentor"] -->|TEACHES| Course
-    Course -->|TEACHES_SKILL| Skill[":Skill"]
-    Student -->|BUILT| Project[":Project"]
-    Project -->|USES| Skill
-    Student -->|INTERESTED_IN {priority}| Company[":Company"]
+    Student[":Student"] -->|"ENROLLED_IN {enrolledOn}"| Course[":Course"]
+    Mentor[":Mentor"] -->|"TEACHES"| Course
+    Course -->|"TEACHES_SKILL"| Skill[":Skill"]
+    Student -->|"BUILT"| Project[":Project"]
+    Project -->|"USES"| Skill
+    Student -->|"INTERESTED_IN {priority}"| Company[":Company"]
 ```
 
 ### Node Metrics (22 Nodes Total)
@@ -44,7 +44,6 @@ graph TD
 
 ### Relationship Metrics (28 Relationships Total)
 
-
 | Relationship Type | Source -> Target | Properties | Purpose |
 |---|---|---|---|
 | `:ENROLLED_IN` | `(:Student) -> (:Course)` | `enrolledOn` | Connects learners to enrolled courses. |
@@ -56,9 +55,15 @@ graph TD
 
 ---
 
+## 🖼️ Graph Visualization
+
+![EdTech Knowledge Graph](assets/graph_preview.png)
+
+---
+
 ## 📁 Key Files & Script Walkthrough
 
-- [`cypher/01_seed_graph.cypher`](cypher/01_seed_graph.cypher): Idempotent Cypher script populating 22 nodes and 27 relationships using `MERGE`.
+- [`cypher/01_seed_graph.cypher`](cypher/01_seed_graph.cypher): Idempotent Cypher script populating 22 nodes and 28 relationships using `MERGE`.
 - [`cypher/02_crud_operations.cypher`](cypher/02_crud_operations.cypher): Cypher script demonstrating CREATE, MATCH, SET, and DETACH DELETE operations.
 - [`src/connection.py`](src/connection.py): Neo4j driver connection manager using environment variables.
 - [`src/build_graph.py`](src/build_graph.py): Python driver execution of graph seeding.
@@ -86,6 +91,91 @@ RETURN s.name AS Student, p.name AS Project, sk.name AS Skill;
 ```cypher
 MATCH (s:Student {id: "S07"})
 DETACH DELETE s;
+```
+
+---
+
+## 📊 Sample Multi-Hop Query Results
+
+### 1. Students Who Built Projects Using Cypher (`:Student -> :Project -> :Skill`)
+```cypher
+MATCH (s:Student)-[:BUILT]->(p:Project)-[:USES]->(sk:Skill {name: "Cypher"})
+RETURN s.name AS Student, p.name AS Project, sk.name AS Skill;
+```
+
+| Student | Project | Skill |
+|---|---|---|
+| Elena Rostova | Enterprise Graph Engine | Cypher |
+| Zara Khan | Enterprise Graph Engine | Cypher |
+
+---
+
+### 2. Mentors Teaching Courses and Associated Skills (`:Mentor -> :Course -> :Skill`)
+```cypher
+MATCH (m:Mentor)-[:TEACHES]->(c:Course)-[:TEACHES_SKILL]->(sk:Skill)
+RETURN m.name AS Mentor, c.code AS Course, sk.name AS Skill;
+```
+
+| Mentor | Course | Skill |
+|---|---|---|
+| Dr. Alicia Vance | CS101 | Cypher |
+| Dr. Alicia Vance | CS101 | Python |
+| David Kim | CS103 | Docker |
+| Sarah Jenkins | CS102 | Python |
+| Sarah Jenkins | CS102 | GraphQL |
+
+---
+
+### 3. Students Targeting Specific Hiring Partners (`:Student -> :Company`)
+```cypher
+MATCH (s:Student)-[:INTERESTED_IN]->(co:Company)
+RETURN s.name AS Student, co.name AS Company;
+```
+
+| Student | Company |
+|---|---|
+| Aarav Sharma | GraphTech Labs |
+| Elena Rostova | GraphTech Labs |
+| Chen Wei | NextGen Cloud |
+| Zara Khan | DataFlow Systems |
+
+---
+
+## 🖥️ Sample Execution Output
+
+### Graph Seeding Pipeline (`python src/build_graph.py`)
+```text
+6 constraints + 50 statements executed.
+Graph Status: 22 nodes, 28 relationships.
+```
+
+### Full CRUD & Multi-Hop Query Pipeline (`python src/crud_demo.py`)
+```text
+6 constraints + 50 statements executed.
+Graph Status: 22 nodes, 28 relationships.
+
+[CREATE] Added student S07 enrolled in CS101.
+
+[READ 1] Students who built projects using Cypher (:Student, :Project, :Skill, :BUILT, :USES):
+ - Elena Rostova built 'Enterprise Graph Engine' using Cypher
+ - Zara Khan built 'Enterprise Graph Engine' using Cypher
+
+[READ 2] Mentors teaching courses and skills (:Mentor, :Course, :Skill, :TEACHES, :TEACHES_SKILL):
+ - Mentor Dr. Alicia Vance teaches CS101 covering Cypher
+ - Mentor Dr. Alicia Vance teaches CS101 covering Python
+ - Mentor David Kim teaches CS103 covering Docker
+ - Mentor Sarah Jenkins teaches CS102 covering Python
+ - Mentor Sarah Jenkins teaches CS102 covering GraphQL
+
+[READ 3] Students interested in target companies (:Student, :Company, :INTERESTED_IN):
+ - Aarav Sharma interested in GraphTech Labs
+ - Elena Rostova interested in GraphTech Labs
+ - Chen Wei interested in NextGen Cloud
+ - Zara Khan interested in DataFlow Systems
+
+[UPDATE] Updated S01 level to Intermediate (updatedAt: 2026-10-31T07:36:56.924000000+00:00).
+
+[DELETE] Detached and deleted student S07.
 ```
 
 ---

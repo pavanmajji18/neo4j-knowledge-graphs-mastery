@@ -14,7 +14,7 @@ def run_crud():
                 MERGE (c:Course {code: "CS101", title: "Neo4j & Knowledge Graphs", credits: 4})
                 MERGE (s)-[:ENROLLED_IN {enrolledOn: "2026-09-01"}]->(c)
             """)
-            print("[CREATE] Added student S07 enrolled in CS101.")
+            print("\n[CREATE] Added student S07 enrolled in CS101.")
 
             # 2. READ: Query across all 6 node labels and relationship patterns
             print("\n[READ 1] Students who built projects using Cypher (:Student, :Project, :Skill, :BUILT, :USES):")
@@ -42,11 +42,12 @@ def run_crud():
                 print(f" - {record['student']} interested in {record['company']}")
 
             # 3. UPDATE: Promote student S01 level
-            session.run("""
+            update_res = session.run("""
                 MATCH (s:Student {id: "S01"})
                 SET s.level = "Intermediate", s.updatedAt = datetime()
-            """)
-            print("\n[UPDATE] Updated S01 level to Intermediate.")
+                RETURN s.id AS id, s.name AS name, s.level AS level, s.updatedAt AS updatedAt
+            """).single()
+            print(f"\n[UPDATE] Updated S01 level to Intermediate (updatedAt: {update_res['updatedAt']}).")
 
             # 4. DELETE: Cleanly detach and delete student S07
             session.run("""

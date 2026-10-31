@@ -71,6 +71,9 @@ def seed_database():
     else:
         queries = SEED_CYPHER_STATEMENTS
 
+    constraints_count = sum(1 for q in queries if "CONSTRAINT" in q.upper())
+    statements_count = len(queries) - constraints_count
+
     with get_driver() as driver:
         driver.verify_connectivity()
         with driver.session() as session:
@@ -81,7 +84,8 @@ def seed_database():
             nodes = node_res["count"] if node_res else 0
             rels = rel_res["count"] if rel_res else 0
 
-    print(f"Graph successfully seeded with {nodes} nodes and {rels} relationships.")
+    print(f"{constraints_count} constraints + {statements_count} statements executed.")
+    print(f"Graph Status: {nodes} nodes, {rels} relationships.")
 
 if __name__ == "__main__":
     seed_database()
