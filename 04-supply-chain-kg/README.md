@@ -58,6 +58,14 @@ graph LR
 
 ---
 
+## 🖼️ Graph Visualization & Live Topology
+
+![Multi-Echelon Supply Chain Risk Knowledge Graph Topology](assets/supply_chain_graph.png)
+
+> **Figure 1**: High-resolution interactive topology exported from Neo4j Aura Console. Highlighting the 5-node, 4-hop critical path (amber trail) from **Silico Mining Co** (Tier-2) through **Alpha Chipsets** (Tier-1) and **Processor MCU-101** (`C_X`) down to **Smart Watch Pro** / **Industrial Tablet** and regional assembly facilities (**Austin Assembly Center** & **Dresden Tech Plant**), paired with active in-transit shipment buffer routing (`SH_001` / `TRK-9871` with 5,000 units in-flight buffer inventory).
+
+---
+
 ## 🔒 Schema & Constraints Inventory
 
 ### 1. Neo4j 5.x Uniqueness Constraints
@@ -106,6 +114,8 @@ CREATE CONSTRAINT shipment_id_unique IF NOT EXISTS FOR (sh:Shipment) REQUIRE sh.
 ├── .gitignore                    # Enforces secret hygiene (.env, venv, pycache)
 ├── requirements.txt              # Production dependencies (neo4j, python-dotenv)
 ├── README.md                     # Portfolio technical specification & verification runbook
+├── assets/
+│   └── supply_chain_graph.png    # High-resolution rendered graph visual with split-screen HUD
 ├── cypher/
 │   ├── 01_seed_graph.cypher      # Standalone Cypher DDL (constraints) & idempotent DML (MERGE)
 │   └── 02_risk_queries.cypher    # Standalone risk and provenance queries for Aura Console
@@ -208,6 +218,22 @@ RETURN cou.name AS OriginCountry, s.name AS Supplier, c.name AS Component, p.nam
 
 ---
 
+### Query 6: In-Transit Shipment Mitigation for Component X (`C_X`)
+*Business Value: Traverses active in-transit shipments (`:Shipment {status: 'IN_TRANSIT'}`) carrying Component X (`C_X`) and destined for physical plants, quantifying real-time in-flight buffer inventory available to mitigate upstream supplier halts.*
+
+```cypher
+MATCH (sh:Shipment {status: 'IN_TRANSIT'})-[r:CONTAINS]->(c:Component {id: 'C_X'}),
+      (sh)-[:DESTINED_FOR]->(pl:Plant)
+RETURN sh.trackingNo AS TrackingNumber, sh.status AS ShipmentStatus, c.name AS Component, r.quantity AS InTransitQuantity, pl.name AS DestinationPlant, pl.city AS DestinationCity;
+```
+
+#### Results
+| TrackingNumber | ShipmentStatus | Component | InTransitQuantity | DestinationPlant | DestinationCity |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| TRK-9871 | IN_TRANSIT | Processor MCU-101 | 5000 | Austin Assembly Center | Austin |
+
+---
+
 ## 💻 Verbatim CLI Output
 
 ### Graph Construction & Ingestion (`build_graph.py`)
@@ -251,6 +277,11 @@ Executing: 4. Dependency path between Tier-2 Supplier and Plant
 Executing: 5. Components supplied from Germany (DE) used in products
 ==================================================
 {'OriginCountry': 'Germany', 'Supplier': 'Beta Displays', 'Component': 'OLED Display 6-inch', 'Product': 'Smart Watch Pro'}
+
+==================================================
+Executing: 6. In-transit shipment mitigation for Component X (C_X)
+==================================================
+{'TrackingNumber': 'TRK-9871', 'ShipmentStatus': 'IN_TRANSIT', 'Component': 'Processor MCU-101', 'InTransitQuantity': 5000, 'DestinationPlant': 'Austin Assembly Center', 'DestinationCity': 'Austin'}
 ```
 
 ---
@@ -299,5 +330,5 @@ python src/run_queries.py
 ## 🎤 Engineering Interview Speaking Points
 
 - **Index-Free Adjacency at Scale**: *"In standard relational databases, tracing multi-tier BOM cascades requires iterative joins that degrade exponentially with tree depth. In Neo4j, relationships are stored as direct physical memory pointers on the nodes. This allows us to traverse 4 hops from a Tier-2 raw material extractor down to a physical assembly plant in $O(1)$ constant time per hop."*
-- **Blast-Radius Modeling**: *"By modeling both static master data (suppliers, parts, plants) and dynamic operational data (shipments, lead times) in the same graph, we can evaluate outage blast radiuses instantly. If a microchip supplier in Taiwan shuts down, Cypher pattern matching queries pinpoint every delayed shipment, stalled assembly plant, and impacted end-product SKU in a single millisecond traversal."*
+- **Blast-Radius & In-Transit Mitigation**: *"By unifying master BOM data with real-time operational logistics in the same graph, we instantly quantify risk buffers. If Alpha Chipsets in Taiwan experiences an outage, our Cypher queries pinpoint not only the stalled assembly lines in Texas, but also detect that Shipment TRK-9871 is currently in transit with 5,000 units of Processor MCU-101 destined for Austin, establishing an immediate buffer window."*
 - **Idempotency & Data Quality**: *"All schema seeding relies on Neo4j 5.x uniqueness constraints across natural primary identifiers (`id`). Relationship and node ingestion scripts use idempotent `MERGE` statements with parameter mapping, ensuring reliable execution across CI/CD automated build pipelines."*

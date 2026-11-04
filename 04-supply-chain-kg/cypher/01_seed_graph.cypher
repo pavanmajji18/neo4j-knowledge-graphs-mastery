@@ -106,3 +106,4 @@ MERGE (sh)-[r:CONTAINS]->(comp) SET r.quantity = 2000;
 
 MATCH (sh:Shipment {id: 'SH_002'}), (pl:Plant {id: 'PL_ATX'})
 MERGE (sh)-[:DESTINED_FOR]->(pl);
+

@@ -24,3 +24,8 @@ RETURN [node in nodes(path) | coalesce(node.name, labels(node)[0])] AS Traversal
 // --- Query 5: Components supplied from Germany (DE) used in products ---
 MATCH (cou:Country {id: 'DE'})<-[:LOCATED_IN]-(s:Supplier)-[:SUPPLIES]->(c:Component)-[:USED_IN]->(p:Product)
 RETURN cou.name AS OriginCountry, s.name AS Supplier, c.name AS Component, p.name AS Product;
+
+// --- Query 6: In-transit shipment mitigation for Component X (C_X) ---
+MATCH (sh:Shipment {status: 'IN_TRANSIT'})-[r:CONTAINS]->(c:Component {id: 'C_X'}),
+      (sh)-[:DESTINED_FOR]->(pl:Plant)
+RETURN sh.trackingNo AS TrackingNumber, sh.status AS ShipmentStatus, c.name AS Component, r.quantity AS InTransitQuantity, pl.name AS DestinationPlant, pl.city AS DestinationCity;
