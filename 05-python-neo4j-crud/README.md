@@ -8,6 +8,70 @@ This module provides a production-oriented, object-oriented Python implementatio
 
 ---
 
+## 🕸️ Graph Schema & Driver Architecture
+
+### Visual Architecture & Developer Showcase
+
+![Programmatic Python Neo4j CRUD Engine](assets/linkedin_visual.png)
+
+### 1. Graph Data Model Topology
+
+The database schema models students and academic courses connected by enrollment relationships with temporal semester metadata:
+
+```mermaid
+graph LR
+    Student[":Student {name: STRING, age: INTEGER, city: STRING}"] -->|":ENROLLED_IN {semester: STRING}"| Course[":Course {code: STRING, name: STRING}"]
+```
+
+- **`(:Student)` Node**: Represents enrolled learners identified by `name` (STRING), `age` (INTEGER), and residential `city` (STRING).
+- **`(:Course)` Node**: Represents curriculum courses uniquely indexed by `code` (STRING) and titled by `name` (STRING).
+- **`[:ENROLLED_IN]` Relationship**: Directed attributed edge from `Student` to `Course` bearing `semester` (STRING) metadata.
+
+### 2. Driver & Execution Lifecycle
+
+The pipeline follows a clean separation of concerns, decoupling driver connection pooling from operational domain logic with context-managed sessions:
+
+```mermaid
+flowchart LR
+    A["main.py<br/>(Pipeline Orchestrator)"] --> B["Neo4jConnection<br/>(GraphDatabase.driver + verify_connectivity)"]
+    B --> C["StudentCourseCRUD<br/>(with driver.session() as session)"]
+    C --> D["Parameterized Cypher<br/>($name, $code, $semester)"]
+    D --> E[("Neo4j AuraDB<br/>(Cloud Graph Instance)")]
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor App as main.py
+    participant Conn as Neo4jConnection<br/>(GraphDatabase.driver)
+    participant CRUD as StudentCourseCRUD<br/>(driver.session())
+    participant Driver as Parameterized Cypher<br/>($name, $code, $semester)
+    participant AuraDB as Neo4j AuraDB<br/>(Cloud Instance)
+
+    App->>Conn: 1. Initialize & verify_connection()
+    Conn->>AuraDB: driver.verify_connectivity()
+    AuraDB-->>Conn: Connectivity confirmed
+    Conn-->>App: "Connected to Neo4j Aura successfully."
+    App->>CRUD: 2. StudentCourseCRUD(conn.driver)
+    
+    rect rgb(20, 30, 45)
+        Note over App,AuraDB: Parameterized CRUD Operation Lifecycle (e.g. enroll_student)
+        App->>CRUD: enroll_student(student_name, course_code, semester)
+        CRUD->>CRUD: with self.driver.session() as session
+        CRUD->>Driver: session.run(query, student_name=..., course_code=..., semester=...)
+        Driver->>AuraDB: Execute Cypher with parameter dictionary ($params)
+        AuraDB-->>Driver: Return record stream
+        Driver-->>CRUD: record.single()
+        CRUD->>CRUD: Unpack Record to dict & auto-close session (socket release)
+        CRUD-->>App: Return dict(record)
+    end
+
+    App->>Conn: 3. conn.close() (finally block)
+    Conn->>AuraDB: Terminate driver connection pool
+```
+
+---
+
 ## 🎯 Key Objectives & Engineering Standards
 
 1. **Object-Oriented Design**: Encapsulates database operations inside a clean Python class ([`StudentCourseCRUD`](crud_operations.py)).
@@ -21,11 +85,13 @@ This module provides a production-oriented, object-oriented Python implementatio
 
 ```text
 05-python-neo4j-crud/
-├── connection.py        # Neo4jConnection class managing driver lifecycle
-├── crud_operations.py   # StudentCourseCRUD class implementing parameterized CRUD
-├── main.py              # Execution pipeline demonstrating end-to-end CRUD
-├── requirements.txt     # Dependencies (neo4j, python-dotenv)
-└── README.md            # Module documentation
+├── assets/
+│   └── linkedin_visual.png  # High-resolution (2400x1350 @2x) architecture visual card
+├── connection.py            # Neo4jConnection class managing driver lifecycle
+├── crud_operations.py       # StudentCourseCRUD class implementing parameterized CRUD
+├── main.py                  # Execution pipeline demonstrating end-to-end CRUD
+├── requirements.txt         # Dependencies (neo4j, python-dotenv)
+└── README.md                # Module documentation
 ```
 
 ---
@@ -68,23 +134,40 @@ def enroll_student(self, student_name: str, course_code: str, semester: str):
 
 ---
 
-## ⚡ Execution Instructions
+## 🚀 Quick Start & Sample Execution Output
+
+### Environment Setup & Execution
 
 ```bash
 # 1. Navigate to directory
 cd 05-python-neo4j-crud
 
-# 2. Activate virtual environment & install requirements
+# 2. Activate virtual environment
 python -m venv venv
-.\venv\Scripts\activate  # macOS/Linux: source venv/bin/activate
+# Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# macOS/Linux:
+# source venv/bin/activate
+
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 3. Run the full CRUD pipeline
+# 4. Copy environment configuration
+cp .env.example .env
+# Edit .env with your Neo4j AuraDB credentials:
+# NEO4J_URI=neo4j+s://<dbid>.databases.neo4j.io
+# NEO4J_USERNAME=neo4j
+# NEO4J_PASSWORD=<your_password>
+
+# 5. Run the full CRUD pipeline
 python main.py
 ```
 
-#### Expected Execution Output:
+### Verified Terminal Output
+
 ```text
+Connected to Neo4j Aura successfully.
+
 --- 1. Creating Nodes ---
 Created: {'name': 'Alice Smith', 'age': 22, 'city': 'Seattle'}
 
