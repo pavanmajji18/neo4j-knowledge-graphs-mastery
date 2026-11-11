@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    width: 1600px;
+    height: 1000px;
+    overflow: hidden;
+    background: #080C11;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #E6EDF3;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 24px;
+    gap: 14px;
+  }
+
+  /* TOP BANNER */
+  .header-card {
+    background: linear-gradient(135deg, #161B22 0%, #0D1117 100%);
+    border: 1px solid #30363D;
+    border-radius: 12px;
+    padding: 14px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .main-title {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    color: #FFFFFF;
+  }
+  .tags-row {
+    display: flex;
+    gap: 8px;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 16px;
+    border: 1px solid #30363D;
+    background: #21262D;
+    color: #C9D1D9;
+  }
+  .tag.blue { border-color: #1F6FEB; color: #58A6FF; background: rgba(31, 111, 235, 0.18); }
+  .tag.green { border-color: #238636; color: #7EE787; background: rgba(35, 134, 54, 0.18); }
+  .tag.purple { border-color: #8957E5; color: #D2A8FF; background: rgba(137, 87, 229, 0.18); }
+  .tag.orange { border-color: #D29922; color: #F0883E; background: rgba(210, 153, 34, 0.18); }
+
+  .subtitle {
+    font-size: 13.5px;
+    color: #8B949E;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot-sep {
+    color: #58A6FF;
+    font-weight: bold;
+  }
+
+  /* TOPOLOGY PILL */
+  .topology-bar {
+    background: #0D1117;
+    border: 1px solid #30363D;
+    border-radius: 8px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 12px;
+  }
+  .topo-label {
+    color: #8B949E;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-right: 4px;
+    letter-spacing: 0.5px;
+  }
+  .node {
+    color: #58A6FF;
+    font-weight: 600;
+  }
+  .rel {
+    color: #7EE787;
+    font-weight: 600;
+  }
+  .rel-var {
+    color: #FFA657;
+    font-weight: 700;
+    background: rgba(240, 136, 62, 0.22);
+    padding: 1px 5px;
+    border-radius: 4px;
+    border: 1px solid rgba(240, 136, 62, 0.45);
+  }
+  .arr {
+    color: #6E7681;
+  }
+
+  /* SPLIT MAIN */
+  .split-container {
+    display: grid;
+    grid-template-columns: 46% 54%;
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* COLUMN CARDS */
+  .pane {
+    background: #161B22;
+    border: 1px solid #30363D;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  }
+  .pane-header {
+    background: #21262D;
+    border-bottom: 1px solid #30363D;
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .traffic-lights {
+    display: flex;
+    gap: 6px;
+  }
+  .traffic-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .dot-red { background: #FF5F56; }
+  .dot-yellow { background: #FFBD2E; }
+  .dot-green { background: #27C93F; }
+
+  .pane-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #C9D1D9;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pane-badge {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  .pane-badge.blue {
+    background: rgba(31, 111, 235, 0.2);
+    color: #79C0FF;
+    border: 1px solid #1F6FEB;
+  }
+  .pane-badge.terminal {
+    background: rgba(46, 160, 67, 0.2);
+    color: #7EE787;
+    border: 1px solid #238636;
+  }
+
+  /* CODE PANE */
+  .code-body {
+    padding: 12px 14px;
+    overflow: hidden;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 11.6px;
+    line-height: 1.34;
+    color: #E6EDF3;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #0D1117;
+    flex: 1;
+  }
+  .code-block {
+    background: #161B22;
+    border: 1px solid #30363D;
+    border-radius: 7px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .code-comment {
+    color: #8B949E;
+    font-style: italic;
+    font-size: 10.8px;
+    margin-bottom: 2px;
+  }
+  .kw { color: #FF7B72; font-weight: 600; }
+  .fn { color: #D2A8FF; font-weight: 600; }
+  .str { color: #A5D6FF; }
+  .prop { color: #FFA657; }
+  .cypher-kw { color: #79C0FF; font-weight: 700; }
+
+  .hl-orange {
+    background: rgba(240, 136, 62, 0.25);
+    border: 1px solid #F0883E;
+    color: #FFB370;
+    padding: 0 4px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  .hl-cyan {
+    background: rgba(56, 189, 248, 0.25);
+    border: 1px solid #38BDF8;
+    color: #79C0FF;
+    padding: 0 4px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  .hl-green {
+    background: rgba(46, 160, 67, 0.25);
+    border: 1px solid #3FB950;
+    color: #7EE787;
+    padding: 0 4px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+
+  /* TERMINAL PANE */
+  .terminal-body {
+    padding: 10px 12px;
+    overflow: hidden;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 9.6px;
+    line-height: 1.18;
+    color: #C9D1D9;
+    background: #090D13;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .terminal-item {
+    background: #10151C;
+    border: 1px solid #21262D;
+    border-radius: 6px;
+    padding: 7px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .terminal-title {
+    color: #58A6FF;
+    font-weight: 700;
+    font-size: 10.5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .terminal-title::before {
+    content: "▶";
+    color: #7EE787;
+    font-size: 8px;
+  }
+  pre.grid-table {
+    margin: 0;
+    color: #E6EDF3;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 9.3px;
+    white-space: pre;
+    line-height: 1.15;
+    letter-spacing: -0.25px;
+  }
+
+  /* FOOTER */
+  .footer-card {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    border-top: 1px solid #30363D;
+    font-size: 11.5px;
+    color: #8B949E;
+  }
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: "Cascadia Code", Consolas, monospace;
+    color: #58A6FF;
+    font-weight: 500;
+  }
+  .footer-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Cascadia Code", Consolas, monospace;
+    color: #7EE787;
+    font-weight: 500;
+  }
+  .gh-icon {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    fill: currentColor;
+  }
+</style>
+</head>
+<body>
+
+  <!-- TOP BANNER -->
+  <div class="header-card">
+    <div class="header-top">
+      <div class="title-group">
+        <h1 class="main-title">06. Advanced Graph Traversal &amp; Multi-Hop Cypher Analytics</h1>
+      </div>
+      <div class="tags-row">
+        <span class="tag blue">Neo4j AuraDB</span>
+        <span class="tag green">Python Driver</span>
+        <span class="tag purple">Index-Free Adjacency</span>
+        <span class="tag orange">Supply Chain KG</span>
+      </div>
+    </div>
+    <div class="subtitle">
+      <span>Neo4j AuraDB</span>
+      <span class="dot-sep">•</span>
+      <span>Python Driver</span>
+      <span class="dot-sep">•</span>
+      <span>Index-Free Adjacency</span>
+      <span class="dot-sep">•</span>
+      <span>Supply Chain Knowledge Graph</span>
+    </div>
+    <div class="topology-bar">
+      <span class="topo-label">Topology Pill:</span>
+      <span class="node">(:Supplier)</span>
+      <span class="arr">-</span><span class="rel">[:SUPPLIES]</span><span class="arr">-&gt;</span>
+      <span class="node">(:Component)</span>
+      <span class="arr">-</span><span class="rel-var">[:DEPENDS_ON*1..3]</span><span class="arr">-&gt;</span>
+      <span class="node">(:Component)</span>
+      <span class="arr">-</span><span class="rel">[:PART_OF]</span><span class="arr">-&gt;</span>
+      <span class="node">(:Product)</span>
+      <span class="arr">-</span><span class="rel">[:MANUFACTURED_AT]</span><span class="arr">-&gt;</span>
+      <span class="node">(:Plant)</span>
+    </div>
+  </div>
+
+  <!-- SPLIT SCREEN MAIN CONTAINER -->
+  <div class="split-container">
+
+    <!-- LEFT COLUMN: CODE -->
+    <div class="pane">
+      <div class="pane-header">
+        <div class="traffic-lights">
+          <div class="traffic-dot dot-red"></div>
+          <div class="traffic-dot dot-yellow"></div>
+          <div class="traffic-dot dot-green"></div>
+        </div>
+        <div class="pane-title">
+          <span>traversal_queries.py</span>
+          <span style="color:#6E7681;">— Multi-Hop Cypher Engine</span>
+        </div>
+        <span class="pane-badge blue">Cypher Engine</span>
+      </div>
+
+      <div class="code-body">
+
+        <!-- Method 1: q8 -->
+        <div class="code-block">
+          <div class="code-comment"># Query 8: Variable-Length Traversal (Recursive BOM Dependencies)</div>
+          <div><span class="kw">def</span> <span class="fn">q8_variable_length_bom</span>(self):</div>
+          <div style="padding-left: 12px;"><span class="prop">query</span> = <span class="str">"""</span></div>
+          <div style="padding-left: 12px;"><span class="cypher-kw">MATCH</span> (s:Supplier)-[:SUPPLIES]-&gt;(c1:Component)-<span class="hl-orange">[:DEPENDS_ON*1..3]</span>-&gt;(c2:Component)</div>
+          <div style="padding-left: 12px;"><span class="cypher-kw">RETURN</span> s.name <span class="cypher-kw">AS</span> primary_supplier, c1.name <span class="cypher-kw">AS</span> parent_component, c2.name <span class="cypher-kw">AS</span> nested_subcomponent</div>
+          <div style="padding-left: 12px;"><span class="str">"""</span></div>
+          <div style="padding-left: 12px;"><span class="kw">with</span> self.driver.session() <span class="kw">as</span> session:</div>
+          <div style="padding-left: 24px;"><span class="kw">return</span> [dict(rec) <span class="kw">for</span> rec <span class="kw">in</span> session.run(query)]</div>
+        </div>
+
+        <!-- Method 2: q9 -->
+        <div class="code-block">
+          <div class="code-comment"># Query 9: Shortest Path Detection</div>
+          <div><span class="kw">def</span> <span class="fn">q9_shortest_path</span>(self, supplier_id: <span class="fn">str</span>, plant_code: <span class="fn">str</span>):</div>
+          <div style="padding-left: 12px;"><span class="prop">query</span> = <span class="str">"""</span></div>
+          <div style="padding-left: 12px;"><span class="cypher-kw">MATCH</span> (s:Supplier {id: $supplier_id}), (pl:Plant {code: $plant_code})</div>
+          <div style="padding-left: 12px;"><span class="cypher-kw">MATCH</span> p = <span class="hl-cyan">shortestPath((s)-[*]-(pl))</span></div>
+          <div style="padding-left: 12px;"><span class="cypher-kw">RETURN</span> length(p) <span class="cypher-kw">AS</span> hops, [n <span class="cypher-kw">IN</span> nodes(p) | coalesce(n.name, n.code)] <span class="cypher-kw">AS</span> path_nodes</div>
+          <div style="padding-left: 12px;"><span class="str">"""</span></div>
+          <div style="padding-left: 12px;"><span class="kw">with</span> self.driver.session() <span class="kw">as</span> session:</div>
+          <div style="padding-left: 24px;"><span class="kw">return</span> [dict(rec) <span class="kw">for</span> rec <span class="kw">in</span> session.run(query, supplier_id=supplier_id, plant_code=plant_code)]</div>
+        </div>
+
+        <!-- Method 3: q10 -->
+        <div class="code-block">
+          <div class="code-comment"># Query 10: Complete Path Object Extraction &amp; Relationship Inspection</div>
+          <div><span class="kw">def</span> <span class="fn">q10_path_object_inspection</span>(self, product_sku: <span class="fn">str</span>):</div>
+          <div style="padding-left: 12px;"><span class="prop">query</span> = <span class="str">"""</span></div>
+          <div style="padding-left: 12px;"><span class="cypher-kw">MATCH</span> path = (s:Supplier)-[:SUPPLIES]-&gt;(c:Component)-[:PART_OF]-&gt;(p:Product {sku: $product_sku})</div>
+          <div style="padding-left: 12px;"><span class="cypher-kw">RETURN</span> length(path) <span class="cypher-kw">AS</span> path_length,</div>
+          <div style="padding-left: 24px;">[n <span class="cypher-kw">IN</span> <span class="hl-green">nodes(path)</span> | <span class="hl-green">labels(n)[0]</span> + <span class="str">':'</span> + coalesce(n.name, n.sku)] <span class="cypher-kw">AS</span> node_labels,</div>
+          <div style="padding-left: 24px;">[r <span class="cypher-kw">IN</span> <span class="hl-green">relationships(path)</span> | <span class="cypher-kw">type(r)</span>] <span class="cypher-kw">AS</span> edge_types</div>
+          <div style="padding-left: 12px;"><span class="str">"""</span></div>
+          <div style="padding-left: 12px;"><span class="kw">with</span> self.driver.session() <span class="kw">as</span> session:</div>
+          <div style="padding-left: 24px;"><span class="kw">return</span> [dict(rec) <span class="kw">for</span> rec <span class="kw">in</span> session.run(query, product_sku=product_sku)]</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: TERMINAL OUTPUT -->
+    <div class="pane">
+      <div class="pane-header">
+        <div class="traffic-lights">
+          <div class="traffic-dot dot-red"></div>
+          <div class="traffic-dot dot-yellow"></div>
+          <div class="traffic-dot dot-green"></div>
+        </div>
+        <div class="pane-title">
+          <span>bash: python main.py</span>
+          <span style="color:#6E7681;">— Live tabulate Grid Output</span>
+        </div>
+        <span class="pane-badge terminal">tabulate: grid</span>
+      </div>
+
+      <div class="terminal-body">
+
+        <!-- Table 1: Q7 -->
+        <div class="terminal-item">
+          <div class="terminal-title">Q7: Supplier Impact Aggregation (Blast Radius Across Multi-Hop Chain)</div>
+<pre class="grid-table">+---------------------+-----------------------+----------------------+---------------------+
+| supplier            |   supplied_components |   supported_products |   downstream_plants |
++=====================+=======================+======================+=====================+
+| Apex Semiconductors |                     1 |                    2 |                   2 |
++---------------------+-----------------------+----------------------+---------------------+
+| OpticWave Tech      |                     1 |                    2 |                   2 |
++---------------------+-----------------------+----------------------+---------------------+
+| VoltBattery Co      |                     1 |                    1 |                   2 |
++---------------------+-----------------------+----------------------+---------------------+</pre>
+        </div>
+
+        <!-- Table 2: Q8 -->
+        <div class="terminal-item">
+          <div class="terminal-title">Q8: Variable-Length BOM Dependencies (*1..3 Recursive Dependencies)</div>
+<pre class="grid-table">+--------------------+-------------------------+-----------------------+
+| primary_supplier   | parent_component        | nested_subcomponent   |
++====================+=========================+=======================+
+| VoltBattery Co     | SolidState Battery Pack | Refined Cathode Core  |
++--------------------+-------------------------+-----------------------+</pre>
+        </div>
+
+        <!-- Table 3: Q9 -->
+        <div class="terminal-item">
+          <div class="terminal-title">Q9: Shortest Path (SUP-01 -> PLT-TX)</div>
+<pre class="grid-table">+--------+----------------------------------------------------------------------------------------------------+
+|   hops | path_nodes                                                                                         |
++========+====================================================================================================+
+|      3 | ['Apex Semiconductors', 'AI Tensor Processor', 'Autonomous Drone Pro', 'Austin Assembly Facility'] |
++--------+----------------------------------------------------------------------------------------------------+</pre>
+        </div>
+
+        <!-- Table 4: Q10 -->
+        <div class="terminal-item">
+          <div class="terminal-title">Q10: Path Object Inspection (PRD-X1)</div>
+<pre class="grid-table">+---------------+---------------------------------------------------------------------------------------------------+-------------------------+
+|   path_length | node_labels                                                                                       | edge_types              |
++===============+===================================================================================================+=========================+
+|             2 | ['Supplier:Apex Semiconductors', 'Component:AI Tensor Processor', 'Product:Autonomous Drone Pro'] | ['SUPPLIES', 'PART_OF'] |
++---------------+---------------------------------------------------------------------------------------------------+-------------------------+
+|             2 | ['Supplier:OpticWave Tech', 'Component:OLED Display Matrix', 'Product:Autonomous Drone Pro']      | ['SUPPLIES', 'PART_OF'] |
++---------------+---------------------------------------------------------------------------------------------------+-------------------------+
+|             2 | ['Supplier:VoltBattery Co', 'Component:SolidState Battery Pack', 'Product:Autonomous Drone Pro']  | ['SUPPLIES', 'PART_OF'] |
++---------------+---------------------------------------------------------------------------------------------------+-------------------------+</pre>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM FOOTER -->
+  <div class="footer-card">
+    <div class="footer-left">
+      <svg class="gh-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>github.com/pavanmajji18/neo4j-knowledge-graphs-mastery/tree/main/06-graph-traversal-queries</span>
+    </div>
+    <div class="footer-right">
+      <span>Resilient Session Lifecycle: GraphDatabase.driver() + try...finally: conn.close()</span>
+    </div>
+  </div>
+
+</body>
+</html>

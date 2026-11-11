@@ -1,5 +1,12 @@
 from connection import Neo4jConnection
 
+CONSTRAINT_QUERIES = [
+    "CREATE CONSTRAINT supplier_id_unique IF NOT EXISTS FOR (s:Supplier) REQUIRE s.id IS UNIQUE;",
+    "CREATE CONSTRAINT component_id_unique IF NOT EXISTS FOR (c:Component) REQUIRE c.id IS UNIQUE;",
+    "CREATE CONSTRAINT product_sku_unique IF NOT EXISTS FOR (p:Product) REQUIRE p.sku IS UNIQUE;",
+    "CREATE CONSTRAINT plant_code_unique IF NOT EXISTS FOR (pl:Plant) REQUIRE pl.code IS UNIQUE;",
+]
+
 SEED_QUERY = """
 // 1. Clear previous sample data safely
 MATCH (n) DETACH DELETE n;
@@ -50,6 +57,13 @@ CREATE (p2)-[:MANUFACTURED_AT {line_id: 'L2', active: true}]->(pl2);
 def seed_database():
     conn = Neo4jConnection()
     with conn.driver.session() as session:
+        # Create schema uniqueness constraints before inserting data
+        for constraint in CONSTRAINT_QUERIES:
+            stmt = constraint.strip().rstrip(";")
+            if stmt:
+                session.run(stmt)
+        print("Schema uniqueness constraints verified.")
+
         for statement in SEED_QUERY.split(";"):
             stmt = statement.strip()
             if stmt:
