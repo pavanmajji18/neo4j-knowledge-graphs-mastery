@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: #080C12;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    color: #E6EDF3;
+    position: relative;
+  }
+
+  /* SUBTLE GRID PATTERN */
+  .grid-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    background-image: 
+      radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+
+  /* TOP AURA NAV BAR */
+  .aura-navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: #0E131C;
+    border-bottom: 1px solid #1E2838;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    z-index: 10;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  }
+  .aura-logo-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .aura-badge {
+    width: 32px;
+    height: 32px;
+    background: #008CC1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 19px;
+    color: #FFFFFF;
+  }
+  .aura-brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .aura-brand-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.2px;
+  }
+  .aura-instance-id {
+    font-size: 11px;
+    color: #94A3B8;
+  }
+
+  /* CYPHER COMMAND BAR */
+  .aura-cypher-bar {
+    flex: 1;
+    max-width: 820px;
+    margin: 0 32px;
+    background: #070B10;
+    border: 1px solid #233044;
+    border-radius: 8px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 10px;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 12.5px;
+  }
+  .cypher-prompt {
+    color: #008CC1;
+    font-weight: 700;
+  }
+  .cypher-query-text {
+    color: #E2E8F0;
+    flex: 1;
+  }
+  .cypher-query-text span.kw { color: #79C0FF; font-weight: 700; }
+  .btn-run {
+    background: #008CC1;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .aura-status-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    background: rgba(35, 134, 54, 0.15);
+    border: 1px solid #238636;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #7EE787;
+  }
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    background: #7EE787;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #7EE787;
+  }
+
+  /* LEFT SIDEBAR: LEGEND */
+  .sidebar-legend {
+    position: absolute;
+    top: 84px;
+    left: 24px;
+    width: 230px;
+    background: rgba(14, 19, 28, 0.90);
+    backdrop-filter: blur(12px);
+    border: 1px solid #1E2838;
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 10;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  }
+  .legend-section-title {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #94A3B8;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 0;
+  }
+  .legend-left {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+  }
+  .legend-count {
+    font-size: 11px;
+    color: #94A3B8;
+    background: #1E2633;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  /* BOTTOM OVERLAY: METRICS */
+  .metrics-overlay {
+    position: absolute;
+    bottom: 24px;
+    left: 280px;
+    right: 28px;
+    background: rgba(14, 19, 28, 0.90);
+    backdrop-filter: blur(12px);
+    border: 1px solid #1E2838;
+    border-radius: 12px;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  }
+  .metric-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .metric-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748B;
+    letter-spacing: 0.5px;
+  }
+  .metric-val {
+    font-size: 16px;
+    font-weight: 800;
+    color: #FFFFFF;
+  }
+  .metric-val.teal { color: #4FD1C5; }
+  .metric-val.orange { color: #FB923C; }
+  .metric-val.purple { color: #818CF8; }
+  .metric-val.green { color: #10B981; }
+
+  /* SVG CANVAS */
+  svg.graph-svg {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    width: 1920px;
+    height: 1016px;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+
+  <div class="grid-bg"></div>
+
+  <!-- AURA TOP BAR -->
+  <div class="aura-navbar">
+    <div class="aura-logo-group">
+      <div class="aura-badge">N</div>
+      <div class="aura-brand-text">
+        <div class="aura-brand-name">Neo4j AuraDB Browser</div>
+        <div class="aura-instance-id">Instance: 3106f5af &bull; AuraDB Enterprise Cloud</div>
+      </div>
+    </div>
+
+    <!-- CYPHER BAR -->
+    <div class="aura-cypher-bar">
+      <div class="cypher-prompt">&gt;</div>
+      <div class="cypher-query-text">
+        <span class="kw">MATCH</span> (n)-[r]-&gt;(m) <span class="kw">RETURN</span> n, r, m <span class="kw">LIMIT</span> 300
+      </div>
+      <button class="btn-run">RUN (Ctrl+Enter)</button>
+    </div>
+
+    <!-- STATUS -->
+    <div class="aura-status-group">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span>Connected (AuraDB Free)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR LEGEND -->
+  <div class="sidebar-legend">
+    <div>
+      <div class="legend-section-title">Node Labels (88)</div>
+      <div class="legend-item">
+        <div class="legend-left">
+          <div class="legend-color" style="background: #4FD1C5;"></div>
+          <span>Candidate</span>
+        </div>
+        <span class="legend-count">25</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-left">
+          <div class="legend-color" style="background: #FB923C;"></div>
+          <span>Skill</span>
+        </div>
+        <span class="legend-count">18</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-left">
+          <div class="legend-color" style="background: #818CF8;"></div>
+          <span>JobRole</span>
+        </div>
+        <span class="legend-count">15</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-left">
+          <div class="legend-color" style="background: #38BDF8;"></div>
+          <span>Course</span>
+        </div>
+        <span class="legend-count">12</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-left">
+          <div class="legend-color" style="background: #F59E0B;"></div>
+          <span>Certification</span>
+        </div>
+        <span class="legend-count">10</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-left">
+          <div class="legend-color" style="background: #10B981;"></div>
+          <span>Company</span>
+        </div>
+        <span class="legend-count">8</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="legend-section-title">Relationship Types (227)</div>
+      <div class="legend-item">
+        <span style="color: #4FD1C5; font-size: 11px;">[:HAS_SKILL]</span>
+        <span class="legend-count">84</span>
+      </div>
+      <div class="legend-item">
+        <span style="color: #FB923C; font-size: 11px;">[:REQUIRES_SKILL]</span>
+        <span class="legend-count">49</span>
+      </div>
+      <div class="legend-item">
+        <span style="color: #818CF8; font-size: 11px;">[:APPLIED_TO]</span>
+        <span class="legend-count">22</span>
+      </div>
+      <div class="legend-item">
+        <span style="color: #38BDF8; font-size: 11px;">[:TEACHES]</span>
+        <span class="legend-count">20</span>
+      </div>
+      <div class="legend-item">
+        <span style="color: #F59E0B; font-size: 11px;">[:EARNED]</span>
+        <span class="legend-count">19</span>
+      </div>
+      <div class="legend-item">
+        <span style="color: #F59E0B; font-size: 11px;">[:VALIDATES]</span>
+        <span class="legend-count">18</span>
+      </div>
+      <div class="legend-item">
+        <span style="color: #10B981; font-size: 11px;">[:POSTED_BY]</span>
+        <span class="legend-count">15</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SVG GRAPH CANVAS -->
+  <svg class="graph-svg" xmlns="http://www.w3.org/2000/svg">
+    <line x1="964.3" y1="491.9" x2="1151.6" y2="105.0" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="964.3" y1="491.9" x2="423.8" y2="318.0" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="964.3" y1="491.9" x2="1104.1" y2="887.2" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="964.3" y1="491.9" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="964.3" y1="491.9" x2="548.8" y2="205.3" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1321.8" y1="555.1" x2="1766.2" y2="330.3" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="1321.8" y1="555.1" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1321.8" y1="555.1" x2="373.7" y2="631.1" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1321.8" y1="555.1" x2="1835.3" y2="526.2" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1321.8" y1="555.1" x2="1840.0" y2="400.5" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1084.5" y1="388.2" x2="440.2" y2="272.4" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="1084.5" y1="388.2" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1084.5" y1="388.2" x2="975.8" y2="108.5" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1084.5" y1="388.2" x2="1709.8" y2="257.9" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1084.5" y1="388.2" x2="669.8" y2="175.2" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="983.3" y1="522.3" x2="1151.6" y2="105.0" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="983.3" y1="522.3" x2="423.8" y2="318.0" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="983.3" y1="522.3" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="983.3" y1="522.3" x2="1435.3" y2="844.3" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="983.3" y1="522.3" x2="320.0" y2="494.1" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="811.4" y1="690.1" x2="599.2" y2="812.4" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="811.4" y1="690.1" x2="365.5" y2="380.2" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="811.4" y1="690.1" x2="1375.5" y2="867.9" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="811.4" y1="690.1" x2="886.5" y2="885.0" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1257.0" y1="577.0" x2="1766.2" y2="330.3" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="1257.0" y1="577.0" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1257.0" y1="577.0" x2="373.7" y2="631.1" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1257.0" y1="577.0" x2="1835.3" y2="526.2" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1202.2" y1="449.3" x2="1559.0" y2="201.0" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="1202.2" y1="449.3" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1202.2" y1="449.3" x2="365.5" y2="380.2" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1202.2" y1="449.3" x2="1709.8" y2="257.9" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1046.7" y1="399.2" x2="728.2" y2="140.8" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="1046.7" y1="399.2" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1046.7" y1="399.2" x2="1295.8" y2="127.5" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1046.7" y1="399.2" x2="548.8" y2="205.3" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1101.8" y1="618.1" x2="599.2" y2="812.4" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="1101.8" y1="618.1" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1101.8" y1="618.1" x2="365.5" y2="380.2" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1101.8" y1="618.1" x2="1375.5" y2="867.9" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1101.8" y1="618.1" x2="1840.0" y2="400.5" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1413.0" y1="462.2" x2="1805.2" y2="639.9" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="1413.0" y1="462.2" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1413.0" y1="462.2" x2="975.8" y2="108.5" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1413.0" y1="462.2" x2="1709.8" y2="257.9" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="767.5" y1="628.6" x2="459.2" y2="734.3" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="767.5" y1="628.6" x2="423.8" y2="318.0" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="767.5" y1="628.6" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="767.5" y1="628.6" x2="373.7" y2="631.1" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1035.2" y1="457.6" x2="1151.6" y2="105.0" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="1035.2" y1="457.6" x2="423.8" y2="318.0" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1035.2" y1="457.6" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="772.1" y1="499.8" x2="599.2" y2="812.4" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="772.1" y1="499.8" x2="975.8" y2="108.5" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="772.1" y1="499.8" x2="886.5" y2="885.0" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="772.1" y1="499.8" x2="548.8" y2="205.3" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="819.6" y1="489.2" x2="440.2" y2="272.4" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="819.6" y1="489.2" x2="423.8" y2="318.0" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="819.6" y1="489.2" x2="1435.3" y2="844.3" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="819.6" y1="489.2" x2="533.1" y2="264.9" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1045.9" y1="502.6" x2="1766.2" y2="330.3" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1.3" />
+<line x1="1045.9" y1="502.6" x2="1417.7" y2="852.8" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1045.9" y1="502.6" x2="373.7" y2="631.1" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="1045.9" y1="502.6" x2="548.8" y2="205.3" stroke="rgba(251, 146, 60, 0.32)" stroke-width="1.3" />
+<line x1="920.9" y1="499.5" x2="423.8" y2="318.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="920.9" y1="499.5" x2="1104.1" y2="887.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="920.9" y1="499.5" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="920.9" y1="499.5" x2="1295.8" y2="127.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="920.9" y1="499.5" x2="548.8" y2="205.3" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="920.9" y1="499.5" x2="964.3" y2="491.9" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="920.9" y1="499.5" x2="983.3" y2="522.3" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="920.9" y1="499.5" x2="762.2" y2="603.1" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="920.9" y1="499.5" x2="396.0" y2="474.4" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="1263.0" y1="591.2" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1263.0" y1="591.2" x2="373.7" y2="631.1" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1263.0" y1="591.2" x2="1835.3" y2="526.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1263.0" y1="591.2" x2="1840.0" y2="400.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1263.0" y1="591.2" x2="1321.8" y2="555.1" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1263.0" y1="591.2" x2="1257.0" y2="577.0" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1263.0" y1="591.2" x2="1104.4" y2="578.0" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="1089.6" y1="447.7" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1089.6" y1="447.7" x2="975.8" y2="108.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1089.6" y1="447.7" x2="1709.8" y2="257.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1089.6" y1="447.7" x2="886.5" y2="885.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1089.6" y1="447.7" x2="669.8" y2="175.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1089.6" y1="447.7" x2="1084.5" y2="388.2" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1089.6" y1="447.7" x2="931.1" y2="496.6" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="1089.6" y1="447.7" x2="832.0" y2="156.2" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="874.8" y1="652.7" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="874.8" y1="652.7" x2="365.5" y2="380.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="874.8" y1="652.7" x2="1375.5" y2="867.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="874.8" y1="652.7" x2="886.5" y2="885.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="874.8" y1="652.7" x2="811.4" y2="690.1" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="874.8" y1="652.7" x2="869.4" y2="624.7" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="874.8" y1="652.7" x2="417.7" y2="389.2" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="944.9" y1="603.7" x2="423.8" y2="318.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="944.9" y1="603.7" x2="1104.1" y2="887.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="944.9" y1="603.7" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="944.9" y1="603.7" x2="1435.3" y2="844.3" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="944.9" y1="603.7" x2="533.1" y2="264.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="944.9" y1="603.7" x2="983.3" y2="522.3" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="944.9" y1="603.7" x2="762.2" y2="603.1" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="1447.7" y1="455.5" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1447.7" y1="455.5" x2="1295.8" y2="127.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1447.7" y1="455.5" x2="1709.8" y2="257.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="943.8" y1="515.1" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="943.8" y1="515.1" x2="975.8" y2="108.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="943.8" y1="515.1" x2="886.5" y2="885.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="943.8" y1="515.1" x2="548.8" y2="205.3" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="943.8" y1="515.1" x2="772.1" y2="499.8" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="943.8" y1="515.1" x2="717.1" y2="545.2" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="1016.5" y1="574.7" x2="423.8" y2="318.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1016.5" y1="574.7" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1016.5" y1="574.7" x2="373.7" y2="631.1" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1016.5" y1="574.7" x2="1835.3" y2="526.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1016.5" y1="574.7" x2="767.5" y2="628.6" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="810.3" y1="623.4" x2="423.8" y2="318.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="810.3" y1="623.4" x2="1104.1" y2="887.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="810.3" y1="623.4" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="810.3" y1="623.4" x2="373.7" y2="631.1" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="810.3" y1="623.4" x2="964.3" y2="491.9" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="810.3" y1="623.4" x2="762.2" y2="603.1" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="810.3" y1="623.4" x2="396.0" y2="474.4" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="1160.7" y1="642.3" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1160.7" y1="642.3" x2="373.7" y2="631.1" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1160.7" y1="642.3" x2="1835.3" y2="526.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1160.7" y1="642.3" x2="1257.0" y2="577.0" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1012.5" y1="569.8" x2="365.5" y2="380.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1012.5" y1="569.8" x2="1375.5" y2="867.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1012.5" y1="569.8" x2="886.5" y2="885.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1012.5" y1="569.8" x2="1840.0" y2="400.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1012.5" y1="569.8" x2="1101.8" y2="618.1" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1012.5" y1="569.8" x2="869.4" y2="624.7" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="1012.5" y1="569.8" x2="417.7" y2="389.2" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="1120.7" y1="223.1" x2="975.8" y2="108.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1120.7" y1="223.1" x2="1709.8" y2="257.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1120.7" y1="223.1" x2="669.8" y2="175.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1120.7" y1="223.1" x2="1084.5" y2="388.2" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1120.7" y1="223.1" x2="832.0" y2="156.2" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="841.7" y1="557.8" x2="1435.3" y2="844.3" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="841.7" y1="557.8" x2="320.0" y2="494.1" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="841.7" y1="557.8" x2="533.1" y2="264.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="841.7" y1="557.8" x2="819.6" y2="489.2" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1355.7" y1="490.2" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1355.7" y1="490.2" x2="1295.8" y2="127.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="819.9" y1="462.9" x2="423.8" y2="318.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="819.9" y1="462.9" x2="1104.1" y2="887.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="819.9" y1="462.9" x2="975.8" y2="108.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="819.9" y1="462.9" x2="548.8" y2="205.3" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="819.9" y1="462.9" x2="964.3" y2="491.9" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="819.9" y1="462.9" x2="767.5" y2="628.6" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="819.9" y1="462.9" x2="762.2" y2="603.1" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="949.7" y1="621.5" x2="423.8" y2="318.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="949.7" y1="621.5" x2="1104.1" y2="887.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="949.7" y1="621.5" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="949.7" y1="621.5" x2="1035.2" y2="457.6" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="895.6" y1="742.2" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="895.6" y1="742.2" x2="373.7" y2="631.1" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1262.4" y1="455.3" x2="975.8" y2="108.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1262.4" y1="455.3" x2="1709.8" y2="257.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1262.4" y1="455.3" x2="1171.8" y2="890.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1262.4" y1="455.3" x2="1413.0" y2="462.2" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1127.9" y1="546.5" x2="365.5" y2="380.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1127.9" y1="546.5" x2="1375.5" y2="867.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1127.9" y1="546.5" x2="1840.0" y2="400.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1127.9" y1="546.5" x2="1101.8" y2="618.1" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1127.9" y1="546.5" x2="869.4" y2="624.7" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="1232.4" y1="534.4" x2="373.7" y2="631.1" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1232.4" y1="534.4" x2="1835.3" y2="526.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1232.4" y1="534.4" x2="1840.0" y2="400.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1232.4" y1="534.4" x2="1321.8" y2="555.1" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="1232.4" y1="534.4" x2="1104.4" y2="578.0" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="920.8" y1="585.3" x2="423.8" y2="318.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="920.8" y1="585.3" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="902.6" y1="592.9" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="902.6" y1="592.9" x2="886.5" y2="885.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="902.6" y1="592.9" x2="548.8" y2="205.3" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="902.6" y1="592.9" x2="772.1" y2="499.8" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="902.6" y1="592.9" x2="717.1" y2="545.2" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="984.2" y1="554.6" x2="1435.3" y2="844.3" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="984.2" y1="554.6" x2="533.1" y2="264.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1342.3" y1="184.0" x2="975.8" y2="108.5" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="1342.3" y1="184.0" x2="1709.8" y2="257.9" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="854.3" y1="636.4" x2="423.8" y2="318.0" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="854.3" y1="636.4" x2="1104.1" y2="887.2" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="854.3" y1="636.4" x2="1417.7" y2="852.8" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="854.3" y1="636.4" x2="373.7" y2="631.1" stroke="rgba(79, 209, 197, 0.28)" stroke-width="1.3" />
+<line x1="854.3" y1="636.4" x2="964.3" y2="491.9" stroke="rgba(129, 140, 248, 0.35)" stroke-width="1.3" />
+<line x1="854.3" y1="636.4" x2="762.2" y2="603.1" stroke="rgba(148, 163, 184, 0.22)" stroke-width="1.3" />
+<line x1="762.2" y1="603.1" x2="423.8" y2="318.0" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="762.2" y1="603.1" x2="1104.1" y2="887.2" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="931.1" y1="496.6" x2="975.8" y2="108.5" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="931.1" y1="496.6" x2="886.5" y2="885.0" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="869.4" y1="624.7" x2="365.5" y2="380.2" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="869.4" y1="624.7" x2="1375.5" y2="867.9" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="1104.4" y1="578.0" x2="373.7" y2="631.1" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="1104.4" y1="578.0" x2="1835.3" y2="526.2" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="1343.7" y1="182.1" x2="975.8" y2="108.5" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="1343.7" y1="182.1" x2="1709.8" y2="257.9" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="832.0" y1="156.2" x2="975.8" y2="108.5" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="832.0" y1="156.2" x2="669.8" y2="175.2" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="417.7" y1="389.2" x2="365.5" y2="380.2" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="897.8" y1="862.6" x2="886.5" y2="885.0" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="396.0" y1="474.4" x2="423.8" y2="318.0" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="396.0" y1="474.4" x2="373.7" y2="631.1" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="717.1" y1="545.2" x2="886.5" y2="885.0" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="717.1" y1="545.2" x2="548.8" y2="205.3" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.3" />
+<line x1="764.7" y1="602.3" x2="423.8" y2="318.0" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="764.7" y1="602.3" x2="1104.1" y2="887.2" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="1104.8" y1="579.4" x2="373.7" y2="631.1" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="1104.8" y1="579.4" x2="1835.3" y2="526.2" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="824.3" y1="144.1" x2="975.8" y2="108.5" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="824.3" y1="144.1" x2="669.8" y2="175.2" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="871.4" y1="623.6" x2="365.5" y2="380.2" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="871.4" y1="623.6" x2="1375.5" y2="867.9" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="1358.6" y1="490.0" x2="1417.7" y2="852.8" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="1358.6" y1="490.0" x2="1295.8" y2="127.5" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="589.7" y1="231.9" x2="548.8" y2="205.3" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="1107.0" y1="515.7" x2="373.7" y2="631.1" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="1107.0" y1="515.7" x2="1840.0" y2="400.5" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="877.5" y1="669.5" x2="1435.3" y2="844.3" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="877.5" y1="669.5" x2="320.0" y2="494.1" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="903.2" y1="850.3" x2="886.5" y2="885.0" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="400.4" y1="474.6" x2="423.8" y2="318.0" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="400.4" y1="474.6" x2="373.7" y2="631.1" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="1191.2" y1="884.0" x2="1171.8" y2="890.0" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+<line x1="1444.3" y1="841.6" x2="1417.7" y2="852.8" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.3" />
+
+            <g class="node" transform="translate(1151.6,105.0)">
+              <circle r="20" fill="#10B981" opacity="0.18" />
+              <circle r="16" fill="#10B981" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">GraphCorp Te..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1766.2,330.3)">
+              <circle r="20" fill="#10B981" opacity="0.18" />
+              <circle r="16" fill="#10B981" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">AI Nexus Labs</text>
+            </g>
+            
+
+            <g class="node" transform="translate(599.2,812.4)">
+              <circle r="20" fill="#10B981" opacity="0.18" />
+              <circle r="16" fill="#10B981" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">CloudScale S..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(440.2,272.4)">
+              <circle r="20" fill="#10B981" opacity="0.18" />
+              <circle r="16" fill="#10B981" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">DataPulse An..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1559.0,201.0)">
+              <circle r="20" fill="#10B981" opacity="0.18" />
+              <circle r="16" fill="#10B981" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">CyberEdge Se..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(728.2,140.8)">
+              <circle r="20" fill="#10B981" opacity="0.18" />
+              <circle r="16" fill="#10B981" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">QuantumSoft ..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1805.2,639.9)">
+              <circle r="20" fill="#10B981" opacity="0.18" />
+              <circle r="16" fill="#10B981" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">NextGen Fint..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(459.2,734.3)">
+              <circle r="20" fill="#10B981" opacity="0.18" />
+              <circle r="16" fill="#10B981" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">BioHealth In..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(423.8,318.0)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Neo4j</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1104.1,887.2)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Cypher</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1417.7,852.8)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Python</text>
+            </g>
+            
+
+            <g class="node" transform="translate(373.7,631.1)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Machine Lear..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1295.8,127.5)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">FastAPI</text>
+            </g>
+            
+
+            <g class="node" transform="translate(365.5,380.2)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Docker</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1375.5,867.9)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Kubernetes</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1435.3,844.3)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">React</text>
+            </g>
+            
+
+            <g class="node" transform="translate(975.8,108.5)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Data Enginee..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1709.8,257.9)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">SQL</text>
+            </g>
+            
+
+            <g class="node" transform="translate(886.5,885.0)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">AWS</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1835.3,526.2)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">PyTorch</text>
+            </g>
+            
+
+            <g class="node" transform="translate(320.0,494.1)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">GraphQL</text>
+            </g>
+            
+
+            <g class="node" transform="translate(548.8,205.3)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">System Design</text>
+            </g>
+            
+
+            <g class="node" transform="translate(669.8,175.2)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Apache Spark</text>
+            </g>
+            
+
+            <g class="node" transform="translate(533.1,264.9)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">TypeScript</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1171.8,890.0)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">MongoDB</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1840.0,400.5)">
+              <circle r="20" fill="#FB923C" opacity="0.18" />
+              <circle r="16" fill="#FB923C" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">S</text>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">MLOps</text>
+            </g>
+            
+
+            <g class="node" transform="translate(964.3,491.9)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Senior Graph..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1321.8,555.1)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">AI/ML Soluti..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1084.5,388.2)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Lead Data En..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(983.3,522.3)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Fullstack Gr..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(811.4,690.1)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">DevOps &amp; Clo..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1257.0,577.0)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Deep Learnin..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1202.2,449.3)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Cybersecurit..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1046.7,399.2)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Enterprise B..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1101.8,618.1)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">MLOps Infras..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1413.0,462.2)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Fintech Data..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(767.5,628.6)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">HealthTech G..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1035.2,457.6)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Junior Pytho..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(772.1,499.8)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Cloud Data A..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(819.6,489.2)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Frontend Gra..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1045.9,502.6)">
+              <circle r="17" fill="#818CF8" opacity="0.18" />
+              <circle r="13" fill="#818CF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">J</text>
+              <text y="25" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Senior AI Sy..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(920.9,499.5)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Alice Chen</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1263.0,591.2)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Bob Smith</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1089.6,447.7)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Carol Williams</text>
+            </g>
+            
+
+            <g class="node" transform="translate(874.8,652.7)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">David Miller</text>
+            </g>
+            
+
+            <g class="node" transform="translate(944.9,603.7)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Elena Rostova</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1447.7,455.5)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Frank Thorne</text>
+            </g>
+            
+
+            <g class="node" transform="translate(943.8,515.1)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Grace Hopper</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1016.5,574.7)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Hassan Ali</text>
+            </g>
+            
+
+            <g class="node" transform="translate(810.3,623.4)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Irene Adler</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1160.7,642.3)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Jack Vance</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1012.5,569.8)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Kavita Patel</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1120.7,223.1)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Liam Neeson</text>
+            </g>
+            
+
+            <g class="node" transform="translate(841.7,557.8)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Maria Garcia</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1355.7,490.2)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Nathan Drake</text>
+            </g>
+            
+
+            <g class="node" transform="translate(819.9,462.9)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Olga Kurylenko</text>
+            </g>
+            
+
+            <g class="node" transform="translate(949.7,621.5)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Parth Sharma</text>
+            </g>
+            
+
+            <g class="node" transform="translate(895.6,742.2)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Quinn Fabray</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1262.4,455.3)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Rahul Verma</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1127.9,546.5)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Sophia Marti..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1232.4,534.4)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Tariq Mahmood</text>
+            </g>
+            
+
+            <g class="node" transform="translate(920.8,585.3)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Uma Thurman</text>
+            </g>
+            
+
+            <g class="node" transform="translate(902.6,592.9)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Victor Hugo</text>
+            </g>
+            
+
+            <g class="node" transform="translate(984.2,554.6)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Wendy Darling</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1342.3,184.0)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Xavier Herna..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(854.3,636.4)">
+              <circle r="15" fill="#4FD1C5" opacity="0.18" />
+              <circle r="11" fill="#4FD1C5" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Yuki Tanaka</text>
+            </g>
+            
+
+            <g class="node" transform="translate(762.2,603.1)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Neo4j Certif..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(931.1,496.6)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">AWS Certifie..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(869.4,624.7)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Certified Ku..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1104.4,578.0)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">TensorFlow D..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1343.7,182.1)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Meta Profess..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(832.0,156.2)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Databricks C..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(417.7,389.2)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Docker Certi..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(897.8,862.6)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">HashiCorp Ce..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(396.0,474.4)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Neo4j Graph ..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(717.1,545.2)">
+              <circle r="15" fill="#F59E0B" opacity="0.18" />
+              <circle r="11" fill="#F59E0B" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">AWS Certifie..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(764.7,602.3)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Neo4j Fundam..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1104.8,579.4)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Advanced Mac..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(824.3,144.1)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Data Enginee..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(871.4,623.6)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Docker &amp; Kub..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1358.6,490.0)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">FastAPI &amp; Mi..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(589.7,231.9)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">System Desig..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1107.0,515.7)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Building Pro..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(877.5,669.5)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">GraphQL &amp; Fu..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(903.2,850.3)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">AWS Cloud Pr..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(400.4,474.6)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Neo4j Graph ..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1191.2,884.0)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">NoSQL System..</text>
+            </g>
+            
+
+            <g class="node" transform="translate(1444.3,841.6)">
+              <circle r="15" fill="#38BDF8" opacity="0.18" />
+              <circle r="11" fill="#38BDF8" stroke="#0F172A" stroke-width="2" />
+              <text y="3.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, sans-serif">C</text>
+              <text y="23" text-anchor="middle" font-size="8" font-weight="600" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Python for H..</text>
+            </g>
+            
+  </svg>
+
+  <!-- BOTTOM METRICS OVERLAY -->
+  <div class="metrics-overlay">
+    <div class="metric-stat">
+      <div class="metric-label">Total Nodes</div>
+      <div class="metric-val teal">88 Nodes</div>
+    </div>
+    <div class="metric-stat">
+      <div class="metric-label">Total Relationships</div>
+      <div class="metric-val orange">227 Edges</div>
+    </div>
+    <div class="metric-stat">
+      <div class="metric-label">Graph Schema</div>
+      <div class="metric-val purple">6 Labels &bull; 7 Rel Types</div>
+    </div>
+    <div class="metric-stat">
+      <div class="metric-label">Graph Traversal Latency</div>
+      <div class="metric-val green">&lt; 3.8ms (Index-Free)</div>
+    </div>
+    <div class="metric-stat">
+      <div class="metric-label">Query Execution</div>
+      <div class="metric-val" style="color: #58A6FF;">11 Multi-Hop Queries Passing</div>
+    </div>
+  </div>
+
+</body>
+</html>

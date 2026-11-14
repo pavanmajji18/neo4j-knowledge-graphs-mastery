@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: #070B11;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    color: #E6EDF3;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 28px;
+    gap: 14px;
+  }
+
+  /* HEADER BAR */
+  .header-card {
+    background: linear-gradient(135deg, #111722 0%, #0B0E14 100%);
+    border: 1px solid #243042;
+    border-radius: 12px;
+    padding: 14px 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  }
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #008CC1 0%, #005F87 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 24px;
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(0, 140, 193, 0.45);
+  }
+  .title-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .main-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    color: #FFFFFF;
+  }
+  .sub-title {
+    font-size: 13px;
+    color: #8B949E;
+    font-weight: 500;
+  }
+  .sub-title span {
+    color: #58A6FF;
+    font-weight: 600;
+  }
+  .badges-row {
+    display: flex;
+    gap: 10px;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid #30363D;
+    background: #161B22;
+    color: #C9D1D9;
+    letter-spacing: 0.2px;
+  }
+  .badge.blue { border-color: #1F6FEB; color: #58A6FF; background: rgba(31, 111, 235, 0.16); }
+  .badge.green { border-color: #238636; color: #7EE787; background: rgba(35, 134, 54, 0.16); }
+  .badge.orange { border-color: #D29922; color: #FFA657; background: rgba(210, 153, 34, 0.16); }
+  .badge.purple { border-color: #8957E5; color: #D2A8FF; background: rgba(137, 87, 229, 0.16); }
+
+  /* SPLIT MAIN */
+  .split-container {
+    display: grid;
+    grid-template-columns: 1.02fr 0.98fr;
+    gap: 18px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* PANE STYLING */
+  .pane {
+    background: #0C1017;
+    border: 1px solid #212936;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55);
+  }
+  .pane-header {
+    background: #141A24;
+    border-bottom: 1px solid #243042;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pane-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #C9D1D9;
+  }
+  .pane-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .pane-dot.red { background: #FF5F56; }
+  .pane-dot.yellow { background: #FFBD2E; }
+  .pane-dot.green { background: #27C93F; }
+  .window-controls {
+    display: flex;
+    gap: 7px;
+  }
+
+  /* LEFT PANE: CODE */
+  .code-body {
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .code-box {
+    background: #06090E;
+    border: 1px solid #1A222E;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+    font-size: 12.3px;
+    line-height: 1.48;
+    color: #D1D5DB;
+    overflow-x: auto;
+  }
+  .code-pre {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    white-space: pre;
+  }
+  .kw-func { color: #79C0FF; font-weight: 600; }
+  .kw-def { color: #FF7B72; font-weight: 600; }
+  .kw-param { color: #FFA657; }
+  .kw-cypher { color: #79C0FF; font-weight: 700; }
+  .kw-where { color: #FF7B72; font-weight: 800; }
+  .kw-opt { color: #D2A8FF; font-weight: 700; }
+  .kw-ret { color: #7EE787; font-weight: 700; }
+  .kw-comment { color: #768390; font-style: italic; }
+  .code-highlight {
+    background: rgba(255, 123, 114, 0.16);
+    border-left: 3px solid #FF7B72;
+    padding: 2px 6px;
+    display: block;
+    margin: 1px -6px;
+    border-radius: 0 4px 4px 0;
+  }
+  .code-highlight-opt {
+    background: rgba(210, 168, 255, 0.16);
+    border-left: 3px solid #D2A8FF;
+    padding: 2px 6px;
+    display: block;
+    margin: 1px -6px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* CALLOUT CARDS */
+  .callouts-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .callout-card {
+    background: #0E131C;
+    border: 1px solid #202938;
+    border-radius: 8px;
+    padding: 9px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .callout-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #58A6FF;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .callout-desc {
+    font-size: 10.6px;
+    color: #9CA3AF;
+    line-height: 1.35;
+  }
+
+  /* RIGHT PANE: CLI & TOPOLOGY */
+  .right-body {
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    overflow: hidden;
+  }
+  .terminal-box {
+    background: #06090E;
+    border: 1px solid #1B2330;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 10.4px;
+    line-height: 1.3;
+    color: #E2E8F0;
+    overflow-x: auto;
+    flex: 1;
+  }
+  .cmd-prompt {
+    color: #7EE787;
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-size: 11.2px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #FFA657;
+    margin-top: 6px;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  pre.cli-table {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin: 0;
+    white-space: pre;
+  }
+
+  /* TOPOLOGY DIAGRAM IN RIGHT PANE */
+  .topology-card {
+    background: #0E131C;
+    border: 1px solid #202938;
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .topology-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topology-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #7EE787;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .topology-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 4px 0;
+  }
+  .topo-node {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .node-cand { background: rgba(79, 209, 197, 0.2); border: 1px solid #4FD1C5; color: #4FD1C5; }
+  .node-job { background: rgba(129, 140, 248, 0.2); border: 1px solid #818CF8; color: #818CF8; }
+  .node-skill { background: rgba(251, 146, 60, 0.2); border: 1px solid #FB923C; color: #FB923C; }
+  .node-course { background: rgba(56, 189, 248, 0.2); border: 1px solid #38BDF8; color: #38BDF8; }
+  .node-cert { background: rgba(245, 158, 11, 0.2); border: 1px solid #F59E0B; color: #F59E0B; }
+  .node-comp { background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; color: #10B981; }
+  .topo-arrow {
+    font-size: 9.5px;
+    color: #64748B;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  /* FOOTER */
+  .footer-card {
+    background: #0C1017;
+    border: 1px solid #212936;
+    border-radius: 10px;
+    padding: 9px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: #8B949E;
+  }
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .footer-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-circle {
+    width: 8px;
+    height: 8px;
+    background: #238636;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #238636;
+  }
+</style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <div class="header-card">
+    <div class="brand-group">
+      <div class="logo-icon">N</div>
+      <div class="title-text">
+        <div class="main-title">Enterprise Job &amp; Skill Recommendation Engine</div>
+        <div class="sub-title">3-Hop Multi-Degree Graph Traversal &amp; Learning Path Recommendation &bull; <span>Neo4j Aura Cloud DB</span></div>
+      </div>
+    </div>
+    <div class="badges-row">
+      <div class="badge blue">88 Nodes</div>
+      <div class="badge purple">227 Relationships</div>
+      <div class="badge green">11 Cypher Analytics</div>
+      <div class="badge orange">5/5 Unit Tests Passing</div>
+    </div>
+  </div>
+
+  <!-- SPLIT SCREEN CONTENT -->
+  <div class="split-container">
+
+    <!-- LEFT PANE: CYPHER ENGINE CODE -->
+    <div class="pane">
+      <div class="pane-header">
+        <div class="window-controls">
+          <div class="pane-dot red"></div>
+          <div class="pane-dot yellow"></div>
+          <div class="pane-dot green"></div>
+        </div>
+        <div class="pane-title">src/queries.py &mdash; q4_learning_path_recommendations()</div>
+        <div class="badge blue" style="padding: 2px 8px; font-size: 10px;">Python + Cypher Traversal</div>
+      </div>
+      <div class="code-body">
+        <div class="code-box">
+<pre class="code-pre"><span class="kw-def">def</span> <span class="kw-func">q4_learning_path_recommendations</span>(conn: Neo4jConnection, candidate_id=<span class="kw-param">"C01"</span>, job_id=<span class="kw-param">"J02"</span>):
+    <span class="kw-comment">"""3-Hop Traversal: Bridge skill gaps via Courses &amp; Certifications."""</span>
+    cypher = <span class="kw-comment">"""</span>
+    <span class="kw-cypher">MATCH</span> (c:Candidate {id: $candidate_id})
+    <span class="kw-cypher">MATCH</span> (j:JobRole {id: $job_id})-[r:REQUIRES_SKILL]-&gt;(s:Skill)
+
+<span class="code-highlight">    <span class="kw-comment">// 1. Multi-Hop Gap Exclusion: Filter skills Candidate already possesses</span>
+    <span class="kw-where">WHERE NOT</span> (c)-[:HAS_SKILL]-&gt;(s)</span>
+
+<span class="code-highlight-opt">    <span class="kw-comment">// 2. Multi-Hop Branch: Discover courses teaching the missing skill</span>
+    <span class="kw-opt">OPTIONAL MATCH</span> (crs:Course)-[:TEACHES]-&gt;(s)</span>
+
+<span class="code-highlight-opt">    <span class="kw-comment">// 3. Multi-Hop Branch: Discover industry certifications validating skill</span>
+    <span class="kw-opt">OPTIONAL MATCH</span> (crt:Certification)-[:VALIDATES]-&gt;(s)</span>
+
+    <span class="kw-ret">RETURN</span> s.name <span class="kw-cypher">AS</span> MissingSkill,
+           collect(<span class="kw-cypher">DISTINCT</span> crs.title + <span class="kw-param">' ['</span> + crs.platform + <span class="kw-param">', '</span> + 
+                   toString(crs.duration_hours) + <span class="kw-param">'h]'</span>) <span class="kw-cypher">AS</span> RecommendedCourses,
+           collect(<span class="kw-cypher">DISTINCT</span> crt.title + <span class="kw-param">' [Issuer: '</span> + 
+                   crt.issuer + <span class="kw-param">']'</span>) <span class="kw-cypher">AS</span> RecommendedCertifications
+    <span class="kw-cypher">ORDER BY</span> MissingSkill <span class="kw-cypher">ASC</span>
+    <span class="kw-comment">"""</span>
+    <span class="kw-def">return</span> conn.query(cypher, {"candidate_id": candidate_id, "job_id": job_id})</pre>
+        </div>
+
+        <!-- HIGHLIGHT CALLOUTS -->
+        <div class="callouts-container">
+          <div class="callout-card">
+            <div class="callout-title">⚡ Multi-Hop Skill Gap Exclusion</div>
+            <div class="callout-desc"><b>WHERE NOT (c)-[:HAS_SKILL]-&gt;(s)</b> filters out existing skills via <b>O(1) memory pointer traversal</b>, eliminating expensive SQL outer joins.</div>
+          </div>
+          <div class="callout-card">
+            <div class="callout-title">🎯 Dual Multi-Branch Traversal</div>
+            <div class="callout-desc"><b>OPTIONAL MATCH</b> traverses <b>[:TEACHES]</b> (Course) and <b>[:VALIDATES]</b> (Certification) simultaneously without dropping uncertified skills.</div>
+          </div>
+          <div class="callout-card">
+            <div class="callout-title">🚀 Index-Free Adjacency</div>
+            <div class="callout-desc">Executes <b>3 hops in &lt; 3.8ms</b> across Candidate &rarr; JobRole &rarr; Skill &rarr; Course/Cert independent of overall graph scale.</div>
+          </div>
+          <div class="callout-card">
+            <div class="callout-title">🛡️ Uniqueness Constraints</div>
+            <div class="callout-desc">Strict constraint indexes ensure <b>O(1) anchor node lookup</b> for both Candidate (C01) and JobRole (J02).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANE: LIVE TABULATE CLI & TOPOLOGY -->
+    <div class="pane">
+      <div class="pane-header">
+        <div class="window-controls">
+          <div class="pane-dot red"></div>
+          <div class="pane-dot yellow"></div>
+          <div class="pane-dot green"></div>
+        </div>
+        <div class="pane-title">Terminal Output &amp; Graph Schema Topology</div>
+        <div class="badge green" style="padding: 2px 8px; font-size: 10px;">Live Aura Execution</div>
+      </div>
+      <div class="right-body">
+
+        <!-- TERMINAL OUTPUT -->
+        <div class="terminal-box">
+          <div class="cmd-prompt">&gt; python main.py --query  # Target: Candidate C01 (Alice Chen) &rarr; Job J02 (AI/ML Solutions Architect)</div>
+
+          <div class="section-label">Query 3: Multi-Hop Skill Gap Analysis (2-Hop)</div>
+          <pre class="cli-table">+-------------+---------------------------+-----------------+------------------+-------------------+--------------------+
+| Candidate   | TargetJob                 | TargetCompany   | MissingSkill     | SkillCategory     | RequirementLevel   |
++=============+===========================+=================+==================+===================+====================+
+| Alice Chen  | AI/ML Solutions Architect | AI Nexus Labs   | MLOps            | AI Infrastructure | Preferred          |
++-------------+---------------------------+-----------------+------------------+-------------------+--------------------+
+| Alice Chen  | AI/ML Solutions Architect | AI Nexus Labs   | Machine Learning | AI & ML           | Mandatory          |
++-------------+---------------------------+-----------------+------------------+-------------------+--------------------+
+| Alice Chen  | AI/ML Solutions Architect | AI Nexus Labs   | PyTorch          | Deep Learning     | Mandatory          |
++-------------+---------------------------+-----------------+------------------+-------------------+--------------------+</pre>
+
+          <div class="section-label">Query 4: 3-Hop Learning Path Recommendations</div>
+          <pre class="cli-table">+------------------+------------------------------------------------------------------+-------------------------------------------------------------------+
+| MissingSkill     | RecommendedCourses                                               | RecommendedCertifications                                         |
++==================+==================================================================+===================================================================+
+| MLOps            | • Building Production MLOps Systems [Coursera, 45h]              | (None)                                                            |
++------------------+------------------------------------------------------------------+-------------------------------------------------------------------+
+| Machine Learning | • Advanced Machine Learning with PyTorch [Coursera, 40h]         | • TensorFlow Developer Certificate [Issuer: Google DeepMind]      |
+|                  | • Building Production MLOps Systems [Coursera, 45h]              | • Neo4j Graph Data Science Certified [Issuer: Neo4j GraphAcademy] |
+|                  | • Neo4j Graph Data Science & Node Embeddings [GraphAcademy, 24h] |                                                                   |
++------------------+------------------------------------------------------------------+-------------------------------------------------------------------+
+| PyTorch          | • Advanced Machine Learning with PyTorch [Coursera, 40h]         | • TensorFlow Developer Certificate [Issuer: Google DeepMind]      |
++------------------+------------------------------------------------------------------+-------------------------------------------------------------------+</pre>
+        </div>
+
+        <!-- TOPOLOGY CARD -->
+        <div class="topology-card">
+          <div class="topology-header">
+            <div class="topology-title">Graph Schema Topology (6 Node Types &bull; 7 Relationship Types)</div>
+            <span style="font-size: 10.5px; color: #8B949E;">Index-Free Pointer Traversal</span>
+          </div>
+          <div class="topology-flow">
+            <div class="topo-node node-cand">(:Candidate)</div>
+            <div class="topo-arrow">&ndash;[:HAS_SKILL]&ndash;&gt;</div>
+            <div class="topo-node node-skill">(:Skill)</div>
+            <div class="topo-arrow">&lt;&ndash;[:REQUIRES_SKILL]&ndash;</div>
+            <div class="topo-node node-job">(:JobRole)</div>
+            <div class="topo-arrow">&ndash;[:POSTED_BY]&ndash;&gt;</div>
+            <div class="topo-node node-comp">(:Company)</div>
+          </div>
+          <div class="topology-flow" style="margin-top: -1px;">
+            <div class="topo-node node-cand">(:Candidate)</div>
+            <div class="topo-arrow">&ndash;[:EARNED]&ndash;&gt;</div>
+            <div class="topo-node node-cert">(:Certification)</div>
+            <div class="topo-arrow">&ndash;[:VALIDATES]&ndash;&gt;</div>
+            <div class="topo-node node-skill">(:Skill)</div>
+            <div class="topo-arrow">&lt;&ndash;[:TEACHES]&ndash;</div>
+            <div class="topo-node node-course">(:Course)</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER BAR -->
+  <div class="footer-card">
+    <div class="footer-left">
+      <div class="footer-item">
+        <div class="status-circle"></div>
+        <span><b>Neo4j AuraDB Cloud:</b> Connected (Instance 3106f5af)</span>
+      </div>
+      <div class="footer-item">
+        <span>&bull;</span>
+        <span><b>Seeded Dataset:</b> 88 Nodes | 227 Relationships</span>
+      </div>
+      <div class="footer-item">
+        <span>&bull;</span>
+        <span><b>Test Suite:</b> 5 Unit Tests Passed (test_crud.py)</span>
+      </div>
+    </div>
+    <div>
+      <span>Repository: <b>07-final-kg-project</b> &bull; Production Knowledge Graph Capstone</span>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -12,6 +12,22 @@ This Knowledge Graph maps candidates, technical skills, job postings, corporate 
 
 ---
 
+## 📸 Visual Execution Preview & Engineering Proof-of-Work
+
+### 🌐 Seeded Knowledge Graph Topology (Neo4j AuraDB)
+> **Active AuraDB Subgraph**: 88 Nodes, 227 Relationships across 6 Node Labels and 7 Relationship Types rendered in high-resolution dark-themed graph topology.
+
+![Enterprise Job & Skill Knowledge Graph (88 Nodes, 227 Relationships)](assets/neo4j_aura_graph_visualization.png)
+
+*Note: The asset above is generated directly from the live Neo4j Aura graph data via `generate_assets.py`. To display a manual capture from your Neo4j Aura Browser UI, drop your screenshot into `assets/neo4j_aura_graph_visualization.png`.*
+
+### ⚡ 3-Hop Cypher Learning Path Traversal & Live Tabular Output
+> **Split-Screen Engineering Showcase**: Parameterized 3-hop traversal (`q4_learning_path_recommendations`) highlighting negative pattern filtering (`WHERE NOT (c)-[:HAS_SKILL]->(s)`) and dual multi-branch matching (`[:TEACHES]`, `[:VALIDATES]`) alongside live formatted `tabulate` terminal outputs and graph schema topology.
+
+![3-Hop Cypher Learning Path Traversal & CLI Output](assets/linkedin_split_screen_showcase.png)
+
+---
+
 ## 📌 1. Business Problem Statement & Graph Utility
 
 ### Business Context
@@ -132,6 +148,19 @@ NEO4J_DATABASE=neo4j
 ---
 
 ## 🚀 5. How to Run the Application
+
+### ⚡ Quick One-Liner End-to-End Verification
+Run the complete production pipeline (database seeding, all 11 analytical query executions, and automated unit test suite) in a single chained command:
+
+```bash
+python main.py --seed && python main.py --query && python -m unittest discover tests
+```
+
+- **`python main.py --seed`**: Connects to Neo4j Aura via `Neo4jConnection` in `src/connection.py`, enforces all 6 uniqueness constraints (`candidate_id_unique` through `course_id_unique`), and batch-seeds all 88 nodes and 227 relationships using parameterized `UNWIND $batch` merges in `src/seed_data.py`.
+- **`python main.py --query`**: Executes all 11 multi-hop Cypher analytical queries (`q1_candidate_skills_and_certs` through `q11_course_platforms_for_demand`) in `src/queries.py` and prints formatted `tabulate` tables to the terminal.
+- **`python -m unittest discover tests`**: Runs the automated `TestNeo4jCRUD` suite in `tests/test_crud.py` against `src/crud.py`, verifying candidate creation, profile projection (`OPTIONAL MATCH`), experience updates, skill edge toggling, and isolated `DETACH DELETE` teardown (`TEST_C100`).
+
+---
 
 ### 1. Interactive CLI Application
 Run the main runner to access the interactive terminal menu:
