@@ -174,13 +174,13 @@ graph LR
 
 ```mermaid
 graph TD
-    Cand["(:Candidate)"] -->|:HAS_SKILL {proficiency, years}| Skill["(:Skill)"]
-    Cand -->|:APPLIED_TO {status, date}| Job["(:JobRole)"]
-    Job -->|:REQUIRES_SKILL {level}| Skill
-    Job -->|:POSTED_BY| Comp["(:Company)"]
-    Course["(:Course)"] -->|:TEACHES| Skill
-    Cert["(:Certification)"] -->|:VALIDATES| Skill
-    Cand -->|:EARNED {earned_date}| Cert
+    Cand["(:Candidate)"] -->|":HAS_SKILL (proficiency, years)"| Skill["(:Skill)"]
+    Cand -->|":APPLIED_TO (status, applied_date)"| Job["(:JobRole)"]
+    Job -->|":REQUIRES_SKILL (level)"| Skill
+    Job -->|":POSTED_BY"| Comp["(:Company)"]
+    Course["(:Course)"] -->|":TEACHES"| Skill
+    Cert["(:Certification)"] -->|":VALIDATES"| Skill
+    Cand -->|":EARNED (earned_date)"| Cert
 ```
 
 ---

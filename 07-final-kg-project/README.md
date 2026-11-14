@@ -46,13 +46,13 @@ The Knowledge Graph topology consists of **6 Node Types** and **7 Relationship T
 
 ```mermaid
 graph TD
-    Cand["(:Candidate)"] -->|:HAS_SKILL {proficiency, years}| Skill["(:Skill)"]
-    Cand -->|:APPLIED_TO {status, date}| Job["(:JobRole)"]
-    Job -->|:REQUIRES_SKILL {level}| Skill
-    Job -->|:POSTED_BY| Comp["(:Company)"]
-    Course["(:Course)"] -->|:TEACHES| Skill
-    Cert["(:Certification)"] -->|:VALIDATES| Skill
-    Cand -->|:EARNED {earned_date}| Cert
+    Cand["(:Candidate)"] -->|":HAS_SKILL (proficiency, years)"| Skill["(:Skill)"]
+    Cand -->|":APPLIED_TO (status, applied_date)"| Job["(:JobRole)"]
+    Job -->|":REQUIRES_SKILL (level)"| Skill
+    Job -->|":POSTED_BY"| Comp["(:Company)"]
+    Course["(:Course)"] -->|":TEACHES"| Skill
+    Cert["(:Certification)"] -->|":VALIDATES"| Skill
+    Cand -->|":EARNED (earned_date)"| Cert
 ```
 
 ### Node Types (88 Nodes Total)
